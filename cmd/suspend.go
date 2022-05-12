@@ -81,6 +81,19 @@ Usage examples:
 			status := "done\n"
 			s := utils.CreateSpinner("suspending namespace " + n)
 			s.Start()
+
+			ns, err := a.Clientset.CoreV1().Namespaces().Get(context.TODO(), n, metav1.GetOptions{})
+			if err != nil {
+				a.Logger.Error().Err(err).Msgf("cannot get namespace '%s'", n)
+				s.Stop()
+				continue
+			}
+			if err := utils.IsNamespaceWatched(ns, a.AnnotationsNames.Prefix+"/"+a.AnnotationsNames.ControllerName, a.ControllerName); err != nil {
+				a.Logger.Error().Err(err).Msgf("namespace '%s' is not watched", n)
+				s.Stop()
+				continue
+			}
+
 			if err := a.UpdateNamespace(n, app.SuspendedState); err != nil {
 				a.Logger.Error().Err(err).Msgf("cannot suspend namespace '%s'", n)
 				status = "failed\n"

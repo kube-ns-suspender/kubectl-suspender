@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/briandowns/spinner"
@@ -40,4 +41,15 @@ func CreateSpinner(suffix string) *spinner.Spinner {
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	s.Suffix = " " + suffix
 	return s
+}
+
+func IsNamespaceWatched(ns *v1.Namespace, controllerNameFullAnnot, controllerName string) error {
+	val, ok := ns.Annotations[controllerNameFullAnnot]
+	if !ok {
+		return fmt.Errorf("this namespace is not watched by kube-ns-suspender")
+	}
+	if val != controllerName {
+		return fmt.Errorf("namespace's controller name does not match the configured controller name")
+	}
+	return nil
 }
