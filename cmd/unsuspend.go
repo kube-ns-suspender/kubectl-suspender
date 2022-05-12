@@ -79,13 +79,13 @@ Usage example:
 
 			ns, err := a.Clientset.CoreV1().Namespaces().Get(context.TODO(), n, metav1.GetOptions{})
 			if err != nil {
-				a.Logger.Error().Err(err).Msgf("cannot get namespace '%s'", n)
 				s.Stop()
+				a.Logger.Error().Err(err).Msgf("cannot get namespace '%s'", n)
 				continue
 			}
 			if err := utils.IsNamespaceWatched(ns, a.AnnotationsNames.Prefix+"/"+a.AnnotationsNames.ControllerName, a.ControllerName); err != nil {
-				a.Logger.Error().Err(err).Msgf("namespace '%s' is not watched", n)
 				s.Stop()
+				a.Logger.Error().Err(err).Msgf("namespace '%s' is not watched", n)
 				continue
 			}
 
